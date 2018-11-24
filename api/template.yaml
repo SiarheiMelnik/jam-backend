@@ -18,7 +18,7 @@ Resources:
                 Treatment:
                     Type: Api
                     Properties:
-                        Path: /treatment
+                        Path: /v1/treatment
                         Method: post
     
     TreatmentListFunction:
@@ -31,5 +31,5 @@ Resources:
                 Treatment:
                     Type: Api
                     Properties:
-                        Path: /list
+                        Path: /v1/treatments
                         Method: get

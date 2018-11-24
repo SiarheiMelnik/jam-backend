@@ -30,7 +30,7 @@ const sendForm = async (data) => {
 
     console.log('Result');
     console.log(result.data);
-}
+};
 
 exports.treatment = async (evt) => {
     let response;

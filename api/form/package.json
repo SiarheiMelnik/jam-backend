@@ -1,11 +1,8 @@
 {
-  "name": "treatment",
+  "name": "form",
   "version": "1.0.0",
   "author": "SAM CLI",
   "license": "MIT",
-  "dependencies": {
-    "axios": "^0.18.0"
-  },
   "devDependencies": {
     "puppeteer": "^1.10.0"
   }
