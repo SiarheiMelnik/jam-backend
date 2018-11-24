@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'submit
+
+  Template for submit
+
+  '
+Resources:
+  SubmitFunction:
+    Properties:
+      CodeUri: s3://jam-be/c9bd50dfc23aa31e504351a6ce799c48
+      Environment:
+        Variables:
+          FEEDBACK_URL: https://minsk.gov.by/ru/feedback
+      Events:
+        Submit:
+          Properties:
+            Method: post
+            Path: /v1/submit
+          Type: Api
+      Handler: handler.submit
+      Runtime: nodejs8.10
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

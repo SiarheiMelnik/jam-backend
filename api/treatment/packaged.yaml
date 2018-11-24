@@ -5,10 +5,7 @@ Description: 'treatment Template for treatment
 Resources:
   TreatmentFunction:
     Properties:
-      CodeUri: s3://jam-be/6d337c5b325955df2451623694b1046d
-      Environment:
-        Variables:
-          FEEDBACK_URL: https://minsk.gov.by/ru/feedback
+      CodeUri: s3://jam-be/84937f2033cf2968c12fc0f47b712ee8
       Events:
         Treatment:
           Properties:
@@ -20,7 +17,7 @@ Resources:
     Type: AWS::Serverless::Function
   TreatmentListFunction:
     Properties:
-      CodeUri: s3://jam-be/6d337c5b325955df2451623694b1046d
+      CodeUri: s3://jam-be/84937f2033cf2968c12fc0f47b712ee8
       Events:
         Treatment:
           Properties:

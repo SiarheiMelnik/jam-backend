@@ -8,12 +8,9 @@ Resources:
     TreatmentFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: treatment/
+            CodeUri: ../
             Handler: handler.treatment
             Runtime: nodejs8.10
-            Environment:
-                Variables:
-                    FEEDBACK_URL: https://minsk.gov.by/ru/feedback
             Events:
                 Treatment:
                     Type: Api
@@ -24,7 +21,7 @@ Resources:
     TreatmentListFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: treatment/
+            CodeUri: ../
             Handler: handler.list
             Runtime: nodejs8.10
             Events:

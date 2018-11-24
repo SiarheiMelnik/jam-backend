@@ -15,19 +15,7 @@ const getLetter = async (templateId) => await `Hi from ${templateId}`;
 const sendForm = async (data) => {
     const templateId = data.template;
 
-    const result = await axios.post(`${FEEDBACK_URL}/1`, {
-       mode: 'send',
-       yur: '',
-       value: 1, // goverment
-       type: 'special',
-       org: 1, // goverment
-       whois: data.email,
-       name: `${data.firstName} ${data.secondName} ${data.lastName}`,
-       address: data.address,
-       letter: await getLetter(templateId),
-       capcha: 'xxjb'
-    });
-
+    const result = await axios.post(`${FEEDBACK_URL}/sumbit`, data);
     console.log('Result');
     console.log(result.data);
 };

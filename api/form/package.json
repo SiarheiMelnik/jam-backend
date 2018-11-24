@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "SAM CLI",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "puppeteer": "^1.10.0"
   }
 }

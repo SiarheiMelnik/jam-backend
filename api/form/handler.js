@@ -1,64 +1,75 @@
-'use strict';
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
+const devices = require('puppeteer/DeviceDescriptors');
+    //    mode: 'send',
+    //    yur: '',
+    //    value: 1, // goverment
+    //    type: 'special',
+    //    org: 1, // goverment
+    //    whois: data.email,
+    //    name: `${data.firstName} ${data.secondName} ${data.lastName}`,
+    //    address: data.address,
+    //    letter: await getLetter(templateId),
+    //    capcha: 'xxjb'
 
-const axios = require('axios');
-const mock = require('./mock.json');
+const recognizer = async (data) => await 'capcha';
+const validate = async (html) => await `data`;
+const getLetter = async () => await 'Letter';
 
-const FEEDBACK_URL = process.env.FEEDBACK_URL;
+exports.submit = async (evt) => {
+    const req = {
+        "email": "6mil1er2017@gmail.com",
+        "firstName": "John",
+        "secondName": "Doe",
+        "lastName": "Vladimirovich",
+        "address": "NY",
+        "template": 1
+    };
+    
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-const CORS = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control-Allow-Methods': '*'
-};
-const getLetter = async (templateId) => await `Hi from ${templateId}`;
+    await page.emulate(devices['iPhone 8 Plus']);
 
-const sendForm = async (data) => {
-    const templateId = data.template;
+    await page.goto('https://minsk.gov.by/ru/feedback/1', { waitUntil: 'load' });
+    await page.waitFor(2000);
 
-    const result = await axios.post(`${FEEDBACK_URL}/1`, {
-       mode: 'send',
-       yur: '',
-       value: 1, // goverment
-       type: 'special',
-       org: 1, // goverment
-       whois: data.email,
-       name: `${data.firstName} ${data.secondName} ${data.lastName}`,
-       address: data.address,
-       letter: await getLetter(templateId),
-       capcha: 'xxjb'
+    const capchaPath = `tmp/capcha_gov_form_${Date.now()}.png`;
+
+    await page.screenshot({
+        path: capchaPath,
+        // fullPage: true,
+        clip: { x: 40, y: 405 * 2, width: 120, height: 50 }
     });
 
-    console.log('Result');
-    console.log(result.data);
-}
+    const data = fs.readFileSync(path.join(__dirname, capchaPath));
+    const capchaText = await recognizer(data);
 
-exports.treatment = async (evt) => {
-    let response;
-    try {
-        console.log(FEEDBACK_URL);
-        console.log(evt.body);
+    console.log('Capcha text:', capchaText);
 
-        const data = JSON.parse(evt.body || '{}');
-        
-        await sendForm(data);
+    const letter = await getLetter(req.templateId);
 
-        response = {
-            'statusCode': 200,
-            headers: { ...CORS },
-            'body': JSON.stringify({ form: data, status: 'OK' })
-        }
-    } catch (err) {
-        console.log(err);
-        return err;
-    }
+    await page.type('#whois', `${req.email}`);
+    await page.type('#name', `${req.firstName} ${req.secondName} ${req.lastName}`);
+    await page.type('#address', req.address);
+    await page.type('#letter', letter);
+    await page.type('#captcha', capchaText);
 
-    return response
+    // await page.screenshot({
+    //     path: `images/full_gov_form_${Date.now()}.png`,
+    //     fullPage: true
+    // });
+
+    await page.click('.user-input-button');
+
+    await page.waitForNavigation();
+
+    // const element = await page.$(".scrape");
+    // const text = await page.evaluate(element => element.textContent, element);
+
+    // await validate(text);
+
+    await browser.close();
 };
 
-exports.list = (evt) => {
-    return {
-        'statusCode': 200,
-        headers: { ...CORS },
-        'body': JSON.stringify(mock)
-    };
-};
