@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'treatment Template for treatment
+
+  '
+Resources:
+  TreatmentFunction:
+    Properties:
+      CodeUri: s3://jam-be/536f76256b161c9f9f72947732cc013d
+      Environment:
+        Variables:
+          FEEDBACK_URL: https://minsk.gov.by/ru/feedback
+      Events:
+        HelloWorld:
+          Properties:
+            Method: post
+            Path: /treatment
+          Type: Api
+      Handler: handler.treatment
+      Runtime: nodejs8.10
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
