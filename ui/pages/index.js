@@ -7,7 +7,7 @@ export default () => {
   return (
     <div className="container">
       <div className="row">
-        <div class="col-sm">
+        <div className="col-sm">
           <ModalForm /> 
         </div>
       </div>  
