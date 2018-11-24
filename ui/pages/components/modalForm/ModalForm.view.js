@@ -1,5 +1,14 @@
-import React, {Component} from 'react'
-import { Modal, Button, Form, DropdownButton, Dropdown } from 'react-bootstrap';
+import React, {Component} from 'react';
+import { 
+  Modal, 
+  Button,
+  Form,
+  DropdownButton,
+  Dropdown,
+} from 'react-bootstrap';
+
+import FormItem from '../FormItem';
+import  { LABELS } from '../../constants/constants';
 
 const END_POINT = 'https://klgmnlmaxb.execute-api.us-east-1.amazonaws.com/Prod/v1';
 export class ModalForm extends Component {
@@ -66,20 +75,15 @@ export class ModalForm extends Component {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>Ваш e-mail</Form.Label>
-                <Form.Control type="email" onChange={this.handlerChangeEmail} />
-              </Form.Group>
 
-              <Form.Group controlId="formBasicFIO">
-                <Form.Label>Фамилия, имя, отчество гражданина</Form.Label>
-                <Form.Control type="text"  onChange={this.handlerChangeFIO}/>
-              </Form.Group>
-
-              <Form.Group controlId="formBasicAdress">
-                <Form.Label>Адрес места жительства либо места пребывания гражданина</Form.Label>
-                <Form.Control type="text" onChange={this.handlerChangeAdress}/>
-              </Form.Group>
+              <FormItem controlId="formBasicEmail" labelsTitle={LABELS.EMAIL} type="email" onChange={this.handlerChangeEmail}/>
+              <FormItem controlId="formBasicFIO" labelsTitle={LABELS.FIO} type="text" onChange={this.handlerChangeFIO}/>
+              <FormItem 
+                controlId="formBasicAdress" 
+                labelsTitle={LABELS.ADDRESS} 
+                type="text" 
+                onChange={this.handlerChangeAdress}
+              />
 
               <div className="dropdown-option mt-3">
                 <label>Тема сообщения</label>

@@ -52,6 +52,7 @@ bower_components
 build/Release
 
 # Dependency directories
+api/form/node_modules
 ui/node_modules/
 api/form/node_modules
 ui/.next
