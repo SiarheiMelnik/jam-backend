@@ -8,7 +8,10 @@ Globals:
 Resources:
   TreatmentFunction:
     Properties:
-      CodeUri: s3://jam-be/e6f9626736d73fba5b59fef24eae346e
+      CodeUri: s3://jam-be/a3484f1b01614be3d75c5a85b93a1106
+      Environment:
+        Variables:
+          FORM_URL: https://wf36w9xxo1.execute-api.us-east-1.amazonaws.com/Prod/v1
       Events:
         Treatment:
           Properties:
@@ -20,7 +23,7 @@ Resources:
     Type: AWS::Serverless::Function
   TreatmentListFunction:
     Properties:
-      CodeUri: s3://jam-be/e6f9626736d73fba5b59fef24eae346e
+      CodeUri: s3://jam-be/a3484f1b01614be3d75c5a85b93a1106
       Events:
         Treatment:
           Properties:

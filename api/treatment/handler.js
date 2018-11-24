@@ -3,7 +3,7 @@
 const axios = require('axios');
 const mock = require('./mock');
 
-const FEEDBACK_URL = process.env.FEEDBACK_URL;
+const FORM_URL = process.env.FORM_URL;
 
 const CORS = {
     'Access-Control-Allow-Origin': '*',
@@ -15,7 +15,7 @@ const getLetter = async (templateId) => await `Hi from ${templateId}`;
 const sendForm = async (data) => {
     const templateId = data.template;
 
-    const result = await axios.post(`${FEEDBACK_URL}/sumbit`, data);
+    const result = await axios.post(`${FORM_URL}/submit`, data);
     console.log('Result');
     console.log(result.data);
 };
@@ -23,7 +23,7 @@ const sendForm = async (data) => {
 exports.treatment = async (evt) => {
     let response;
     try {
-        console.log(FEEDBACK_URL);
+        console.log(FORM_URL);
         console.log(evt.body);
 
         const data = JSON.parse(evt.body || '{}');

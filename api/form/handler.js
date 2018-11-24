@@ -18,14 +18,17 @@ const CORS = {
 };
 
 exports.submit = async (evt) => {
-    const req = {
-        "email": "6mil1er2017@gmail.com",
-        "firstName": "John",
-        "secondName": "Doe",
-        "lastName": "Vladimirovich",
-        "address": "NY",
-        "template": 1
-    };
+
+    const req = JSON.parse(evt.body);
+
+    // const req = {
+    //     "email": "6mil1er2017@gmail.com",
+    //     "firstName": "John",
+    //     "secondName": "Doe",
+    //     "lastName": "Vladimirovich",
+    //     "address": "NY",
+    //     "template": 1
+    // };
 
     const executablePath = await extract()
   

@@ -15,6 +15,9 @@ Resources:
             CodeUri: ../
             Handler: handler.treatment
             Runtime: nodejs8.10
+            Environment:
+                Variables:
+                    FORM_URL: https://wf36w9xxo1.execute-api.us-east-1.amazonaws.com/Prod/v1
             Events:
                 Treatment:
                     Type: Api
