@@ -4,6 +4,10 @@ Description: >
     treatment
     Template for treatment
 
+Globals:
+    Function:
+        Timeout: 30
+        
 Resources:
     TreatmentFunction:
         Type: AWS::Serverless::Function

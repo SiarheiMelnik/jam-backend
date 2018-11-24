@@ -2,10 +2,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'treatment Template for treatment
 
   '
+Globals:
+  Function:
+    Timeout: 30
 Resources:
   TreatmentFunction:
     Properties:
-      CodeUri: s3://jam-be/84937f2033cf2968c12fc0f47b712ee8
+      CodeUri: s3://jam-be/e6f9626736d73fba5b59fef24eae346e
       Events:
         Treatment:
           Properties:
@@ -17,7 +20,7 @@ Resources:
     Type: AWS::Serverless::Function
   TreatmentListFunction:
     Properties:
-      CodeUri: s3://jam-be/84937f2033cf2968c12fc0f47b712ee8
+      CodeUri: s3://jam-be/e6f9626736d73fba5b59fef24eae346e
       Events:
         Treatment:
           Properties:
