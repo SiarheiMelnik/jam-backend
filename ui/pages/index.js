@@ -1,6 +1,4 @@
 import './index.css'; 
-import { Button } from 'react-bootstrap';
-import TreatmentView from './components/treatment';
 import ModalForm from './components/modalForm';
 
 export default () => {

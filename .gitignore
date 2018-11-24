@@ -53,6 +53,7 @@ build/Release
 
 # Dependency directories
 ui/node_modules/
+api/form/node_modules
 ui/.next
 jspm_packages/
 

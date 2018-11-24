@@ -1,23 +1,56 @@
 import React, {Component} from 'react'
 import { Modal, Button, Form, DropdownButton, Dropdown } from 'react-bootstrap';
 
+const END_POINT = 'https://klgmnlmaxb.execute-api.us-east-1.amazonaws.com/Prod/v1';
 export class ModalForm extends Component {
   constructor(props, context) {
     super(props, context);
+    
+    this.dataSend = {
+      email: '',
+      fio: '',
+      adress: '',
+      messageSubject: '',
+      treeType: '',
+      damageType: '',
+    }
 
-    this.handleShow = this.handleShow.bind(this);
-    this.handleClose = this.handleClose.bind(this);
     this.state = {
       show: false,
     };
   }
 
-  handleClose() {
+  async sendData() {
+    console.log(this.data); 
+
+    const responce = await fetch(`${END_POINT}/treatment`, {method: 'POST'});
+    const data = await responce.json();
+    console.log(data); 
+  }
+
+  handlerChangeEmail = (evt) => {
+    this.data.email = evt.target.value;
+  }
+
+  handlerChangeFIO = (evt) => {
+    this.data.fio = evt.target.value;
+  }
+
+  handlerChangeAdress = (evt) => {
+    this.data.adress = evt.target.value;
+  }
+
+  handleClose = () => {
     this.setState({ show: false });
   }
 
-  handleShow() {
+  handleShow = () => {
     this.setState({ show: true });
+  }
+
+  handleClickSubmit = (evt) => {
+    evt.preventDefault();
+    this.sendData();
   }
 
   render() {
@@ -35,17 +68,17 @@ export class ModalForm extends Component {
             <Form>
               <Form.Group controlId="formBasicEmail">
                 <Form.Label>Ваш e-mail</Form.Label>
-                <Form.Control type="email" />
+                <Form.Control type="email" onChange={this.handlerChangeEmail} />
               </Form.Group>
 
-              <Form.Group controlId="formBasicEmail">
+              <Form.Group controlId="formBasicFIO">
                 <Form.Label>Фамилия, имя, отчество гражданина</Form.Label>
-                <Form.Control type="text" />
+                <Form.Control type="text"  onChange={this.handlerChangeFIO}/>
               </Form.Group>
 
-              <Form.Group controlId="formBasicEmail">
+              <Form.Group controlId="formBasicAdress">
                 <Form.Label>Адрес места жительства либо места пребывания гражданина</Form.Label>
-                <Form.Control type="text" />
+                <Form.Control type="text" onChange={this.handlerChangeAdress}/>
               </Form.Group>
 
               <div className="dropdown-option mt-3">
@@ -83,7 +116,11 @@ export class ModalForm extends Component {
 
 
 
-              <Button variant="primary" className="w-100 mt-3" type="submit">
+              <Button 
+                onClick={this.handleClickSubmit} 
+                variant="primary" 
+                className="w-100 mt-3" 
+                type="submit">
                 Отправить обращение
               </Button>
             </Form>
