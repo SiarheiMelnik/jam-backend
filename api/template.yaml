@@ -15,8 +15,21 @@ Resources:
                 Variables:
                     FEEDBACK_URL: https://minsk.gov.by/ru/feedback
             Events:
-                HelloWorld:
+                Treatment:
                     Type: Api
                     Properties:
                         Path: /treatment
                         Method: post
+    
+    TreatmentListFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: treatment/
+            Handler: handler.list
+            Runtime: nodejs8.10
+            Events:
+                Treatment:
+                    Type: Api
+                    Properties:
+                        Path: /list
+                        Method: get

@@ -1,7 +1,7 @@
 'use strict';
 
 const axios = require('axios');
-const mock = require('./mock');
+const mock = require('./mock.json');
 
 const FEEDBACK_URL = process.env.FEEDBACK_URL;
 
@@ -55,7 +55,7 @@ exports.treatment = async (evt) => {
     return response
 };
 
-exports.list = async (evt) => {
+exports.list = (evt) => {
     return {
         'statusCode': 200,
         headers: { ...CORS },
