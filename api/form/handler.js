@@ -1,69 +1,92 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer')
+const { extract, cleanup } = require('aws-puppeteer-lambda');
+
 const fs = require('fs');
 const path = require('path');
 const devices = require('puppeteer/DeviceDescriptors');
-    //    mode: 'send',
-    //    yur: '',
-    //    value: 1, // goverment
-    //    type: 'special',
-    //    org: 1, // goverment
-    //    whois: data.email,
-    //    name: `${data.firstName} ${data.secondName} ${data.lastName}`,
-    //    address: data.address,
-    //    letter: await getLetter(templateId),
-    //    capcha: 'xxjb'
 
 const recognizer = async (data) => await 'capcha';
 const validate = async (html) => await `data`;
 const getLetter = async () => await 'Letter';
 
+const FEEDBACK_URL = process.env.FEEDBACK_URL;
+
+const CORS = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Methods': '*'
+};
+
 exports.submit = async (evt) => {
-    const req = {
-        "email": "6mil1er2017@gmail.com",
-        "firstName": "John",
-        "secondName": "Doe",
-        "lastName": "Vladimirovich",
-        "address": "NY",
-        "template": 1
-    };
-    
-    const browser = await puppeteer.launch();
+
+    const req = JSON.parse(evt.body);
+
+    // const req = {
+    //     "email": "6mil1er2017@gmail.com",
+    //     "firstName": "John",
+    //     "secondName": "Doe",
+    //     "lastName": "Vladimirovich",
+    //     "address": "NY",
+    //     "template": 1
+    // };
+
+    const executablePath = await extract()
+  
+    const browser = await puppeteer.launch({
+        ignoreHTTPSErrors: true,
+        args: [
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--single-process',
+            '--no-zygote',
+            '--no-sandbox',
+            '--data-path=/tmp/data-path',
+            '--disk-cache-dir=/tmp/cache-dir'
+        ],
+        executablePath
+    });
+        
     const page = await browser.newPage();
 
     await page.emulate(devices['iPhone 8 Plus']);
 
-    await page.goto('https://minsk.gov.by/ru/feedback/1', { waitUntil: 'load' });
+    await page.goto(`${FEEDBACK_URL}/1`, { waitUntil: 'load' });
+
     await page.waitFor(2000);
 
-    const capchaPath = `tmp/capcha_gov_form_${Date.now()}.png`;
+    const capchaPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
 
     await page.screenshot({
         path: capchaPath,
-        // fullPage: true,
         clip: { x: 40, y: 405 * 2, width: 120, height: 50 }
     });
 
-    const data = fs.readFileSync(path.join(__dirname, capchaPath));
-    const capchaText = await recognizer(data);
+    const capchaData = fs.readFileSync(capchaPath);
+    
+    const capchaText = await recognizer(capchaData);
 
     console.log('Capcha text:', capchaText);
 
-    const letter = await getLetter(req.templateId);
+    const letter = await getLetter(req.complain);
 
     await page.type('#whois', `${req.email}`);
-    await page.type('#name', `${req.firstName} ${req.secondName} ${req.lastName}`);
-    await page.type('#address', req.address);
+    await page.type('#name', `${req.name}`);
+    await page.type('#address', JSON.stringify(req.coords));
     await page.type('#letter', letter);
     await page.type('#captcha', capchaText);
 
-    // await page.screenshot({
-    //     path: `images/full_gov_form_${Date.now()}.png`,
-    //     fullPage: true
-    // });
+    const imgPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
 
-    await page.click('.user-input-button');
+    await page.screenshot({
+        path: imgPath,
+        fullPage: true
+    });
 
-    await page.waitForNavigation();
+    const imgData = fs.readFileSync(imgPath);
+
+    // await page.click('.user-input-button');
+
+    // await page.waitForNavigation();
 
     // const element = await page.$(".scrape");
     // const text = await page.evaluate(element => element.textContent, element);
@@ -71,5 +94,14 @@ exports.submit = async (evt) => {
     // await validate(text);
 
     await browser.close();
+
+    return {
+        'statusCode': 200,
+        headers: { ...CORS },
+        'body': JSON.stringify({
+            capcha: capchaData.toString('base64'),
+            img: imgData.toString('base64')
+        })
+    };
 };
 

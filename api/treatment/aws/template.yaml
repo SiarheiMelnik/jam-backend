@@ -4,6 +4,10 @@ Description: >
     treatment
     Template for treatment
 
+Globals:
+    Function:
+        Timeout: 30
+        
 Resources:
     TreatmentFunction:
         Type: AWS::Serverless::Function
@@ -11,6 +15,17 @@ Resources:
             CodeUri: ../
             Handler: handler.treatment
             Runtime: nodejs8.10
+            Policies:
+                - Statement:
+                    - Effect: Allow
+                      Action:
+                        - 'dynamodb:*'
+                      Resource:
+                        - '*'
+            Environment:
+                Variables:
+                    FORM_URL: https://wf36w9xxo1.execute-api.us-east-1.amazonaws.com/Prod/v1
+                    TABLE_NAME: jam-db
             Events:
                 Treatment:
                     Type: Api
@@ -24,6 +39,16 @@ Resources:
             CodeUri: ../
             Handler: handler.list
             Runtime: nodejs8.10
+            Environment:
+                Variables:
+                    TABLE_NAME: jam-db
+            Policies:
+                - Statement:
+                    - Effect: Allow
+                      Action:
+                        - 'dynamodb:*'
+                      Resource:
+                        - '*'
             Events:
                 Treatment:
                     Type: Api

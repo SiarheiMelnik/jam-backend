@@ -4,6 +4,10 @@ Description: |
     submit
     Template for submit
 
+Globals:
+    Function:
+        Timeout: 30
+
 Resources:
     SubmitFunction:
         Type: AWS::Serverless::Function
@@ -11,6 +15,7 @@ Resources:
             CodeUri: ../
             Handler: handler.submit
             Runtime: nodejs8.10
+            MemorySize: 1024
             Environment:
                 Variables:
                     FEEDBACK_URL: https://minsk.gov.by/ru/feedback
