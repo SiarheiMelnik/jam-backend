@@ -10,7 +10,7 @@ Globals:
 Resources:
   SubmitFunction:
     Properties:
-      CodeUri: s3://jam-be/650db5e630ae9a7d407f3a90806339b3
+      CodeUri: s3://jam-be/d2800117d4d412ea63e62e9924297c88
       Environment:
         Variables:
           FEEDBACK_URL: https://minsk.gov.by/ru/feedback
@@ -21,7 +21,7 @@ Resources:
             Path: /v1/submit
           Type: Api
       Handler: handler.submit
-      MemorySize: 2048
+      MemorySize: 1024
       Runtime: nodejs8.10
     Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31

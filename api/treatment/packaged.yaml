@@ -8,10 +8,11 @@ Globals:
 Resources:
   TreatmentFunction:
     Properties:
-      CodeUri: s3://jam-be/a3484f1b01614be3d75c5a85b93a1106
+      CodeUri: s3://jam-be/62cbd911a5f1613a787c7047da378d3e
       Environment:
         Variables:
           FORM_URL: https://wf36w9xxo1.execute-api.us-east-1.amazonaws.com/Prod/v1
+          TABLE_NAME: jam-db
       Events:
         Treatment:
           Properties:
@@ -19,11 +20,21 @@ Resources:
             Path: /v1/treatment
           Type: Api
       Handler: handler.treatment
+      Policies:
+      - Statement:
+        - Action:
+          - dynamodb:*
+          Effect: Allow
+          Resource:
+          - '*'
       Runtime: nodejs8.10
     Type: AWS::Serverless::Function
   TreatmentListFunction:
     Properties:
-      CodeUri: s3://jam-be/a3484f1b01614be3d75c5a85b93a1106
+      CodeUri: s3://jam-be/62cbd911a5f1613a787c7047da378d3e
+      Environment:
+        Variables:
+          TABLE_NAME: jam-db
       Events:
         Treatment:
           Properties:
@@ -31,6 +42,13 @@ Resources:
             Path: /v1/treatments
           Type: Api
       Handler: handler.list
+      Policies:
+      - Statement:
+        - Action:
+          - dynamodb:*
+          Effect: Allow
+          Resource:
+          - '*'
       Runtime: nodejs8.10
     Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31

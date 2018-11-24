@@ -58,7 +58,6 @@ exports.submit = async (evt) => {
 
     await page.screenshot({
         path: capchaPath,
-        // fullPage: true,
         clip: { x: 40, y: 405 * 2, width: 120, height: 50 }
     });
 
@@ -68,14 +67,13 @@ exports.submit = async (evt) => {
 
     console.log('Capcha text:', capchaText);
 
-    const letter = await getLetter(req.templateId);
+    const letter = await getLetter(req.complain);
 
     await page.type('#whois', `${req.email}`);
-    await page.type('#name', `${req.firstName} ${req.secondName} ${req.lastName}`);
-    await page.type('#address', req.address);
+    await page.type('#name', `${req.name}`);
+    await page.type('#address', JSON.stringify(req.coords));
     await page.type('#letter', letter);
     await page.type('#captcha', capchaText);
-
 
     const imgPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
 
