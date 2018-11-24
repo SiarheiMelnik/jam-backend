@@ -1,5 +1,19 @@
-import React, {Component} from 'react'
-import { Modal, Button, Form, DropdownButton, Dropdown } from 'react-bootstrap';
+import React, {Component} from 'react';
+import { 
+  Modal, 
+  Button,
+  Form,
+} from 'react-bootstrap';
+
+import FormItem from '../FormItem';
+import SelectBlock from '../SelectBlock';
+import  { 
+  LABELS, 
+  SELECT_BLOCK,
+  APPEALS, 
+  TREES,
+  DEMAGES,
+} from '../../constants/constants';
 
 const END_POINT = 'https://klgmnlmaxb.execute-api.us-east-1.amazonaws.com/Prod/v1';
 export class ModalForm extends Component {
@@ -8,36 +22,41 @@ export class ModalForm extends Component {
     
     this.dataSend = {
       email: '',
-      fio: '',
+      name: '',
       adress: '',
       messageSubject: '',
-      treeType: '',
-      damageType: '',
+      complaint: {
+        tree : '',
+        damage : '',
+        type : ''
+      }
     }
 
     this.state = {
       show: false,
+      validated: false
     };
   }
 
   async sendData() {
-    console.log(this.data); 
-
-    const responce = await fetch(`${END_POINT}/treatment`, {method: 'POST'});
-    const data = await responce.json();
-    console.log(data); 
+    if (this.state.validated) {
+      console.log(this.dataSend)
+      const responce = await fetch(`${END_POINT}/treatment`, 
+      {method: 'POST'});
+      // const data = await responce.json();
+    }
   }
 
-  handlerChangeEmail = (evt) => {
-    this.data.email = evt.target.value;
+  handlerChangeEmail = (e) => {
+    this.dataSend.email = e.target.value;
   }
 
-  handlerChangeFIO = (evt) => {
-    this.data.fio = evt.target.value;
+  handlerChangeFIO = (e) => {
+    this.dataSend.name = e.target.value;
   }
 
-  handlerChangeAdress = (evt) => {
-    this.data.adress = evt.target.value;
+  handlerChangeAdress = (e) => {
+    this.dataSend.adress = e.target.value;
   }
 
   handleClose = () => {
@@ -48,80 +67,88 @@ export class ModalForm extends Component {
     this.setState({ show: true });
   }
 
-  handleClickSubmit = (evt) => {
-    evt.preventDefault();
+  handleSelectType = (value) => {
+    this.dataSend.complaint.type = value;
+  }
+
+  handleSelectTypeTree = (value) => {
+    this.dataSend.complaint.tree = value;
+  }
+
+  handleSelectDamage = (value) => {
+    this.dataSend.complaint.damage = value;
+  }
+
+  handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.setState({ validated: true });
     this.sendData();
   }
 
   render() {
+    const { validated } = this.state;
     return (
       <div className="modal-form">
         <Button variant="primary" onClick={this.handleShow}>
-          Отправить обращение
+          {LABELS.SEND_APPLY}
         </Button>
 
         <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Новое обращение</Modal.Title>
+            <Modal.Title>{LABELS.NEW_APPLY}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
-              <Form.Group controlId="formBasicEmail">
-                <Form.Label>Ваш e-mail</Form.Label>
-                <Form.Control type="email" onChange={this.handlerChangeEmail} />
-              </Form.Group>
+            <Form 
+              noValidate
+              validated={validated}
+              onSubmit={e => this.handleSubmit(e)}
+            >
+              <FormItem 
+                controlId="formBasicEmail" 
+                labelsTitle={LABELS.EMAIL} 
+                type="email" 
+                onChange={this.handlerChangeEmail}/>
 
-              <Form.Group controlId="formBasicFIO">
-                <Form.Label>Фамилия, имя, отчество гражданина</Form.Label>
-                <Form.Control type="text"  onChange={this.handlerChangeFIO}/>
-              </Form.Group>
+              <FormItem 
+                controlId="formBasicFIO" 
+                labelsTitle={LABELS.FIO} 
+                type="text" 
+                onChange={this.handlerChangeFIO}/>
 
-              <Form.Group controlId="formBasicAdress">
-                <Form.Label>Адрес места жительства либо места пребывания гражданина</Form.Label>
-                <Form.Control type="text" onChange={this.handlerChangeAdress}/>
-              </Form.Group>
+              <FormItem 
+                controlId="formBasicAdress" 
+                labelsTitle={LABELS.ADDRESS}
+                type="text" 
+                onChange={this.handlerChangeAdress}
+              />
 
-              <div className="dropdown-option mt-3">
-                <label>Тема сообщения</label>
-                <DropdownButton 
-                  id="dropdown-message" 
-                  title="Хочу уведомить об опасном дереве"
-                >
-                  <Dropdown.Item>Тема сообщения 2</Dropdown.Item>
-                  <Dropdown.Item>Тема сообщения 3</Dropdown.Item>
-                </DropdownButton>
-              </div>
-              
-              <div className="dropdown-option mt-3">
-                <label>Порода дерева</label>
-                <DropdownButton 
-                  id="dropdown-message" 
-                  title="Неизвестно"
-                >
-                  <Dropdown.Item>Клен</Dropdown.Item>
-                  <Dropdown.Item>Дуб</Dropdown.Item>
-                </DropdownButton>      
-              </div> 
+              <SelectBlock
+                theme={SELECT_BLOCK.LETTER_THEME}
+                options={APPEALS}
+                onSelect={this.handleSelectType} 
+              />
 
-              <div className="dropdown-option mt-3">
-                <label>Вид повреждения</label>
-                <DropdownButton 
-                  id="dropdown-message" 
-                  title="Надломленные ветви"
-                >
-                  <Dropdown.Item>Вид повреждения 2</Dropdown.Item>
-                  <Dropdown.Item>Вид повреждения 3</Dropdown.Item>
-                </DropdownButton>      
-              </div> 
+              <SelectBlock
+                theme={SELECT_BLOCK.TREE_NAME}
+                options={TREES} 
+                onSelect={this.handleSelectTypeTree}
+              />
 
+              <SelectBlock
+                theme={SELECT_BLOCK.DAMAGE}
+                options={DEMAGES}
+                onSelect={this.handleSelectDamage}
+              /> 
 
-
-              <Button 
-                onClick={this.handleClickSubmit} 
+              <Button
                 variant="primary" 
-                className="w-100 mt-3" 
+                className="w-100 mt-3"
                 type="submit">
-                Отправить обращение
+                {LABELS.SEND_APPLY}
               </Button>
             </Form>
           </Modal.Body>
