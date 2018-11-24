@@ -5,7 +5,7 @@ Description: 'treatment Template for treatment
 Resources:
   TreatmentFunction:
     Properties:
-      CodeUri: s3://jam-be/536f76256b161c9f9f72947732cc013d
+      CodeUri: s3://jam-be/3dcb45f6f4fde237940b6ebe8066d57f
       Environment:
         Variables:
           FEEDBACK_URL: https://minsk.gov.by/ru/feedback
