@@ -1,0 +1,1 @@
+export {TreatmentView as default} from './Treatments.view'; 
