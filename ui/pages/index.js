@@ -1,11 +1,11 @@
 import './index.css'; 
 import React, {Component} from 'react'
 import ModalForm from './components/modalForm';
+import QueryTable from './components/queryTable';git c
 import { Navbar, Container, Row, Col } from 'react-bootstrap';
 import { END_POINT } from '../config';
 import moment from 'moment';
 
-import QueryTable from './components/queryTable';
 export default class AdministrationPage extends Component  {
   constructor(props, context) {
     super(props, context);
