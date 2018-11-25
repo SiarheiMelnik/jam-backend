@@ -10,18 +10,26 @@ Globals:
 Resources:
   SubmitFunction:
     Properties:
-      CodeUri: s3://jam-be/d2800117d4d412ea63e62e9924297c88
+      CodeUri: s3://jam-be/f95f30d8185c5cc5e6b2bc6264ebf1fc
       Environment:
         Variables:
           FEEDBACK_URL: https://minsk.gov.by/ru/feedback
       Events:
-        Submit:
+        Stream:
           Properties:
-            Method: post
-            Path: /v1/submit
-          Type: Api
+            BatchSize: 100
+            StartingPosition: TRIM_HORIZON
+            Stream: arn:aws:dynamodb:us-east-1:550997613790:table/jam-db/stream/2018-11-24T20:21:34.623
+          Type: DynamoDB
       Handler: handler.submit
       MemorySize: 1024
+      Policies:
+      - Statement:
+        - Action:
+          - dynamodb:*
+          Effect: Allow
+          Resource:
+          - '*'
       Runtime: nodejs8.10
     Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31

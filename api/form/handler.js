@@ -11,97 +11,96 @@ const getLetter = async () => await 'Letter';
 
 const FEEDBACK_URL = process.env.FEEDBACK_URL;
 
-const CORS = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control-Allow-Methods': '*'
-};
-
 exports.submit = async (evt) => {
-
-    const req = JSON.parse(evt.body);
-
-    // const req = {
-    //     "email": "6mil1er2017@gmail.com",
-    //     "firstName": "John",
-    //     "secondName": "Doe",
-    //     "lastName": "Vladimirovich",
-    //     "address": "NY",
-    //     "template": 1
-    // };
-
-    const executablePath = await extract()
-  
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        args: [
-            '--disable-dev-shm-usage',
-            '--disable-gpu',
-            '--single-process',
-            '--no-zygote',
-            '--no-sandbox',
-            '--data-path=/tmp/data-path',
-            '--disk-cache-dir=/tmp/cache-dir'
-        ],
-        executablePath
-    });
+    try {
+        console.log(evt);
         
-    const page = await browser.newPage();
+        const record = evt.Records[0];
 
-    await page.emulate(devices['iPhone 8 Plus']);
+        if (record.eventName !== 'INSERT') return;
 
-    await page.goto(`${FEEDBACK_URL}/1`, { waitUntil: 'load' });
+        const dbRow = record.dynamodb.NewImage;
 
-    await page.waitFor(2000);
+        console.log(dbRow);
 
-    const capchaPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
+        const req = Object.keys(dbRow).reduce((acc, k) => {
+            const objValue = dbRow[k];
+            const objKey = Object.keys(objValue)[0];
+            return {...acc, ...{ [k]: objValue[objKey] } };
+        } , {});
 
-    await page.screenshot({
-        path: capchaPath,
-        clip: { x: 40, y: 405 * 2, width: 120, height: 50 }
-    });
+        console.log(req);
 
-    const capchaData = fs.readFileSync(capchaPath);
+        const executablePath = await extract()
     
-    const capchaText = await recognizer(capchaData);
+        const browser = await puppeteer.launch({
+            ignoreHTTPSErrors: true,
+            args: [
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--single-process',
+                '--no-zygote',
+                '--no-sandbox',
+                '--data-path=/tmp/data-path',
+                '--disk-cache-dir=/tmp/cache-dir'
+            ],
+            executablePath
+        });
+            
+        const page = await browser.newPage();
 
-    console.log('Capcha text:', capchaText);
+        await page.emulate(devices['iPhone 8 Plus']);
 
-    const letter = await getLetter(req.complain);
+        await page.goto(`${FEEDBACK_URL}/1`, { waitUntil: 'load' });
 
-    await page.type('#whois', `${req.email}`);
-    await page.type('#name', `${req.name}`);
-    await page.type('#address', JSON.stringify(req.coords));
-    await page.type('#letter', letter);
-    await page.type('#captcha', capchaText);
+        // await page.waitFor(2000);
 
-    const imgPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
+        const capchaPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
 
-    await page.screenshot({
-        path: imgPath,
-        fullPage: true
-    });
+        await page.screenshot({
+            path: capchaPath,
+            clip: { x: 40, y: 405 * 2, width: 120, height: 50 }
+        });
 
-    const imgData = fs.readFileSync(imgPath);
+        const capchaData = fs.readFileSync(capchaPath);
 
-    // await page.click('.user-input-button');
+        console.log('Capcha img:', capchaData.toString('base64'))
+        
+        const capchaText = await recognizer(capchaData);
 
-    // await page.waitForNavigation();
+        console.log('Capcha text:', capchaText);
 
-    // const element = await page.$(".scrape");
-    // const text = await page.evaluate(element => element.textContent, element);
+        const letter = await getLetter(req.complain);
 
-    // await validate(text);
+        await page.type('#whois', `${req.email}`);
+        await page.type('#name', `${req.name}`);
+        await page.type('#address', JSON.stringify(req.coords));
+        await page.type('#letter', letter);
+        await page.type('#captcha', capchaText);
 
-    await browser.close();
+        const imgPath = `/tmp/capcha_gov_form_${Date.now()}.png`;
 
-    return {
-        'statusCode': 200,
-        headers: { ...CORS },
-        'body': JSON.stringify({
-            capcha: capchaData.toString('base64'),
-            img: imgData.toString('base64')
-        })
-    };
+        await page.screenshot({
+            path: imgPath,
+            fullPage: true
+        });
+
+        const imgData = fs.readFileSync(imgPath);
+
+        // await page.click('.user-input-button');
+
+        // await page.waitForNavigation();
+
+        // const element = await page.$(".scrape");
+        // const text = await page.evaluate(element => element.textContent, element);
+
+        // await validate(text);
+
+        await browser.close();
+
+    } catch (e) {
+        console.log(e);
+        return e;
+    }
 };
 
