@@ -1,0 +1,1 @@
+export {QueryTable as default} from './QueryTable.view'; 

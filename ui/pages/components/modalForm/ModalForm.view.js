@@ -4,7 +4,6 @@ import {
   Button,
   Form,
 } from 'react-bootstrap';
-
 import FormItem from '../FormItem';
 import SelectBlock from '../SelectBlock';
 import  { 
@@ -14,8 +13,6 @@ import  {
   TREES,
   DEMAGES,
 } from '../../constants/constants';
-
-const END_POINT = 'https://klgmnlmaxb.execute-api.us-east-1.amazonaws.com/Prod/v1';
 export class ModalForm extends Component {
   constructor(props, context) {
     super(props, context);
@@ -24,11 +21,11 @@ export class ModalForm extends Component {
       email: '',
       name: '',
       adress: '',
-      messageSubject: '',
+      message: '',
       complaint: {
-        tree : '',
-        damage : '',
-        type : ''
+        tree: TREES[0].name,
+        damage: DEMAGES[0].name,
+        type: APPEALS[0].name,
       }
     }
 
@@ -36,15 +33,6 @@ export class ModalForm extends Component {
       show: false,
       validated: false
     };
-  }
-
-  async sendData() {
-    if (this.state.validated) {
-      console.log(this.dataSend)
-      const responce = await fetch(`${END_POINT}/treatment`, 
-      {method: 'POST'});
-      // const data = await responce.json();
-    }
   }
 
   handlerChangeEmail = (e) => {
@@ -81,12 +69,17 @@ export class ModalForm extends Component {
 
   handleSubmit = (event) => {
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      this.setState({ validated: true });
+    } else {
+      this.props.sendData(this.dataSend);
+      this.setState({ validated: false });
+      this.handleClose();
     }
-    this.setState({ validated: true });
-    this.sendData();
+
   }
 
   render() {
@@ -105,7 +98,7 @@ export class ModalForm extends Component {
             <Form 
               noValidate
               validated={validated}
-              onSubmit={e => this.handleSubmit(e)}
+              onSubmit={this.handleSubmit}
             >
               <FormItem 
                 controlId="formBasicEmail" 
