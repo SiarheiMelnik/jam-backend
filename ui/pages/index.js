@@ -1,7 +1,7 @@
 import './index.css'; 
 import React, {Component} from 'react'
 import ModalForm from './components/modalForm';
-import QueryTable from './components/queryTable';git c
+import QueryTable from './components/queryTable';
 import { Navbar, Container, Row, Col } from 'react-bootstrap';
 import { END_POINT } from '../config';
 import moment from 'moment';
@@ -15,9 +15,24 @@ export default class AdministrationPage extends Component  {
     };
   }
 
-  async componentDidMount() {
+  sendData(dataSend) {
+    console.log(dataSend);
+
+    fetch(`${END_POINT}/treatments`, {
+      method: 'POST',
+      body: dataSend,
+    });
+  }
+
+  async getData() {
     const responce = await fetch(`${END_POINT}/treatments`, {method: 'GET'});
     const data = await responce.json();
+
+    return data;
+  }
+
+  async componentDidMount() {
+    const data = await this.getData();
 
     console.log(data);
 
@@ -42,7 +57,7 @@ export default class AdministrationPage extends Component  {
               <Col className="d-flex justify-content-between">
                 <h3 className="align-self-end pb-1">Список обращений</h3>
                 <div className="mt-3 mb-3">
-                  <ModalForm />
+                  <ModalForm sendData={this.sendData}/>
                 </div> 
               </Col>
           </Row>
