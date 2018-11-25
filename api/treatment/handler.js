@@ -24,15 +24,13 @@ const CORS = {
 // };
 
 exports.treatment = async (evt) => {
-    let response;
     try {
-        console.log(FORM_URL);
         console.log(evt.body);
 
         const data = JSON.parse(evt.body || '{}');
 
         if (!data.email || !data.name || !data.coords || !data.complaint) {
-            throw new Error('Missed email or name or coords or complain');
+            throw new Error('Missed email or name or coords or complaint');
         }
 
         const row = {
@@ -52,23 +50,23 @@ exports.treatment = async (evt) => {
                 row,
                 (err, res) => err ? reject(err) : resolve(res)));
         
-        // await sendForm(data);
-
-        response = {
+        return {
             'statusCode': 200,
             headers: { ...CORS },
             'body': JSON.stringify({ status: 'OK' })
         };
-    } catch (err) {
-        console.log(err);
-        return err;
+    } catch (e) {
+        console.log(e);
+        
+        return {
+            'statusCode': 500,
+            headers: { ...CORS },
+            'body': JSON.stringify({ status: e.message })
+        };
     }
-
-    return response;
 };
 
 exports.list = async (evt) => {
-    let response;
     try {
         const request = {
             TableName,
@@ -83,15 +81,17 @@ exports.list = async (evt) => {
     
         console.log(Items);
     
-        response = {
+        return {
             'statusCode': 200,
             headers: { ...CORS },
             'body': JSON.stringify(Items)
         };
     } catch (e) {
         console.log(e);
-        return e;
+        return {
+            'statusCode': 500,
+            headers: { ...CORS },
+            'body': JSON.stringify({ error: e.message })
+        };
     }
-
-    return response;
 };

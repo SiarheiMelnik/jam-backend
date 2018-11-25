@@ -10,31 +10,34 @@ export default class AdministrationPage extends Component  {
   constructor(props, context) {
     super(props, context);
 
+    this.sendData = this.sendData.bind(this);
+
     this.state = {
       table: [],
     };
   }
 
-  sendData(dataSend) {
-    console.log(dataSend);
+  async sendData(dataSend) {
+    try {
+      const req = await fetch(`${END_POINT}/treatment`, {
+        method: 'POST',
+        body: JSON.stringify({...dataSend, ...{ coords: [53.933726, 27.71324] }} ),
+      });
 
-    fetch(`${END_POINT}/treatments`, {
-      method: 'POST',
-      body: dataSend,
-    });
+      const resp = await req.json()
+      console.log(resp);
+    } catch (e) {
+      console.log(e);
+    }
+
+    const table = await this.getTableData();
+
+    this.setState({table});
   }
 
-  async getData() {
+  async getTableData() {
     const responce = await fetch(`${END_POINT}/treatments`, {method: 'GET'});
     const data = await responce.json();
-
-    return data;
-  }
-
-  async componentDidMount() {
-    const data = await this.getData();
-
-    console.log(data);
 
     const table = data.map((obj) => {
       return [
@@ -42,6 +45,12 @@ export default class AdministrationPage extends Component  {
         obj.complaint.damage, obj.complaint.type, obj.status, moment(obj.timestamp).format('lll'),
       ]
     });
+
+    return table;
+  }
+
+  async componentDidMount() {
+    const table = await this.getTableData();
 
     this.setState({table});
   }
